@@ -46,25 +46,31 @@ class ShelfMigrate {
   }
 
   function adminPage() {
-		if ( ! empty( $_POST['migrate-shelf'] ) ) {
-			$this->migrate_post( 'quotes', 'quote' );
-			$this->migrate_post( 'links', 'link' );
-			$this->migrate_post( 'video', 'video' );
-			$this->migrate_post( 'images', 'image' );
-			$this->migrate_post( 'audio', 'audio' );
+		if (version_compare(get_bloginfo( 'version' ), '3.1', '>=')) {
+			if ( ! empty( $_POST['migrate-shelf'] ) ) {
+				$this->migrate_post( 'quotes', 'quote' );
+				$this->migrate_post( 'links', 'link' );
+				$this->migrate_post( 'video', 'video' );
+				$this->migrate_post( 'images', 'image' );
+				$this->migrate_post( 'audio', 'audio' );
+			} else {
+			?>
+				<form method="post" action="">
+				<?php wp_nonce_field('migrate-shelf') ?>
+
+					<p><?php printf( __( "Use this tool to migrate Shelf to use WordPress 3.1", 'shelf-migrate' ), admin_url( 'options-media.php' ) ); ?></p>
+
+					<p><?php _e( 'To begin, just press the button below.', 'shelf-migrate'); ?></p>
+
+					<p><input type="submit" class="button" name="migrate-shelf" id="migrate-shelf" value="<?php _e( 'Migrate Shelf', 'shelf-migrate' ) ?>" /></p>
+
+				</form>
+			<?php
+			}
 		} else {
-		?>
-			<form method="post" action="">
-			<?php wp_nonce_field('migrate-shelf') ?>
-
-				<p><?php printf( __( "Use this tool to migrate Shelf to use WordPress 3.1", 'shelf-migrate' ), admin_url( 'options-media.php' ) ); ?></p>
-
-				<p><?php _e( 'To begin, just press the button below.', 'shelf-migrate'); ?></p>
-
-				<p><input type="submit" class="button" name="migrate-shelf" id="migrate-shelf" value="<?php _e( 'Migrate Shelf', 'shelf-migrate' ) ?>" /></p>
-
-			</form>
-		<?php
+			?>
+			<p>This script requires WordPress 3.1 or higher. Please upgrade WordPress.</p>
+			<?php
 		}
   }
 
