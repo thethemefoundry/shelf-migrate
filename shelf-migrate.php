@@ -35,7 +35,7 @@ class ShelfMigrate {
 	}
 	
 	function links( $links, $file ) {
-		if( $file == 'shelf-migration/shelf-migrate.php') {
+		if( $file == 'shelf-migrate/shelf-migrate.php') {
 			$links[] = '<a href="' . admin_url( 'options-general.php?page=shelf-migrate' ) . '">' . __('Settings') . '</a>';
 		}
 		return $links;
@@ -57,7 +57,7 @@ class ShelfMigrate {
 			<form method="post" action="">
 			<?php wp_nonce_field('migrate-shelf') ?>
 
-				<p><?php printf( __( "Use this tool to migrate Shelf to use WordPress 3.1", 'shelf-migration' ), admin_url( 'options-media.php' ) ); ?></p>
+				<p><?php printf( __( "Use this tool to migrate Shelf to use WordPress 3.1", 'shelf-migrate' ), admin_url( 'options-media.php' ) ); ?></p>
 
 				<p><?php _e( 'To begin, just press the button below.', 'shelf-migrate'); ?></p>
 
@@ -72,50 +72,35 @@ class ShelfMigrate {
 		echo "Migrating ".$tumblog_slug."...";
 		$posts = query_posts( array( "tumblog" => $tumblog_slug ) );
 		
-		switch( $post_format_slug ) {
-			case 'quote':
-				foreach( $posts as $post ) {
-					$quote = '<blockquote>';
-					if( $quote_url = get_post_meta( $post->ID, 'quote-url', true ) ){
-						$quote .= '<a href="'.$quote_url.'">'.get_post_meta( $post->ID, 'quote-copy', true ).'</a>';
+		foreach( $posts as $post) {
+			switch( $post_format_slug ) {
+				case 'quote':
+					$quote_url = get_post_meta( $post->ID, 'quote-url', true );
+					$content = '<blockquote>';
+					if( $this->is_valid_url( $quote_url ) ){
+						$content .= '<a href="'.$quote_url.'">'.get_post_meta( $post->ID, 'quote-copy', true ).'</a>';
 					} else {
-						$quote .= get_post_meta( $post->ID, 'quote-copy', true );
+						$content .= get_post_meta( $post->ID, 'quote-copy', true );
 					}
-					$quote .= '</blockquote>';
-					$this->update_post( $post, $quote, $post_format_slug );
-				}
-				echo "OK<br />";
-				break;
-			case 'link':
-				foreach( $posts as $post ) {
-					$link = '<a href="'.get_post_meta( $post->ID, 'link-url', true ).'">'.$post->post_title.'</a>';
-					$this->update_post( $post, $link, $post_format_slug );
-				}
-				echo "OK<br />";
-				break;
-			case 'video':
-				foreach( $posts as $post ) {
-					$video = get_post_meta( $post->ID, 'video-embed', true );
-					$video .= $post->post_content;
-					$this->update_post( $post, $video, $post_format_slug );
-				}
-				echo "OK<br />";
-				break;
-			case 'image':
-				foreach( $posts as $post ) {
-					$image = $post->post_content;
-					$this->update_post( $post, $image, $post_format_slug );
-				}
-				echo "OK<br />";
-				break;
-			case 'audio':
-				foreach( $posts as $post ) {
-					$audio = $post->post_content;
-					$this->update_post( $post, $audio, $post_format_slug );
-				}
-				echo "OK<br />";
-				break;
+					$content .= '</blockquote>';
+					break;
+				case 'link':
+					$content = '<a href="'.get_post_meta( $post->ID, 'link-url', true ).'">'.$post->post_title.'</a>';
+					break;
+				case 'video':
+					$content = get_post_meta( $post->ID, 'video-embed', true );
+					$content .= $post->post_content;
+					break;
+				case 'image':
+					$content = $post->post_content;
+					break;
+				case 'audio':
+					$content = $post->post_content;
+					break;
+			}
+			$this->update_post( $post, $content, $post_format_slug );
 		}
+		echo "OK<br />";
 	}
 	
 	function update_post( $post, $content, $format ) {
@@ -125,6 +110,10 @@ class ShelfMigrate {
 		if ( !has_post_format( $format )) {
 			set_post_format( $post, $format );
 		}
+	}
+	
+	function is_valid_url( $url ){
+		return preg_match('|^http(s)?://[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(/.*)?$|i', $url);
 	}
 	
 }
