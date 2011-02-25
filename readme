@@ -1,0 +1,14 @@
+h2. Upgrade instructions.
+
+These instructions must be followed to the letter or they will not work. Do not upgrade to Shelf 2.0 until you have finished with the migration. Shelf 1.1.4 is required.
+
+h4. Important Note:
+Any posts with Audio or Image files hosted outside of your WordPress installation will need to be updated manually.
+
+1. Back up you database. This is the MOST IMPORTANT step. Do no skip this or you risk losing all your data.
+2. Upgrade WordPress to version 3.1 or higher
+3. Install and Activate Shelf Migrate Plugin
+4. Verify that you are running Shelf 1.1.4 and WordPress 3.1
+5. Navigate to @Settings -> Shelf Migrate@
+6. Click @Migrate Shelf@
+7. Upgrade to Shelf 2.0
