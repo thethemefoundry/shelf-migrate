@@ -12,3 +12,4 @@ Any posts with Audio or Image files hosted outside of your WordPress installatio
 5. Navigate to @Settings -> Shelf Migrate@
 6. Click @Migrate Shelf@
 7. Upgrade to Shelf 2.0
+8. Run the Regenerate Thumbnails plugin http://wordpress.org/extend/plugins/regenerate-thumbnails/
